@@ -479,7 +479,6 @@ EXTERN_C_BEGIN
 #   define mach_type_known
 # endif
 # if defined(__EMSCRIPTEN__)
-#   define EMSCRIPTEN
 #   define I386
 #   define mach_type_known
 # endif
@@ -1284,7 +1283,7 @@ EXTERN_C_BEGIN
 #       define DATASTART ((ptr_t)((((word)(etext)) + 0xfff) & ~0xfff))
 #       define STACKBOTTOM ((ptr_t)0x3ffff000)
 #   endif
-#   ifdef EMSCRIPTEN
+#   ifdef __EMSCRIPTEN__
 #     define OS_TYPE "EMSCRIPTEN"
 #     define DATASTART (ptr_t)ALIGNMENT
 #     define DATAEND (ptr_t)ALIGNMENT
