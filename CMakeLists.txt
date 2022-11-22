@@ -59,6 +59,13 @@ if (NOT (${CMAKE_VERSION} VERSION_LESS "3.18.0"))
   include(CheckLinkerFlag)
 endif()
 
+if (EMSCRIPTEN)
+  # WebAssembly does not support memory mapping capabilities.
+  set(default_enable_munmap OFF)
+else()
+  set(default_enable_munmap ON)
+endif()
+
 # Customize the build by passing "-D<option_name>=ON|OFF" in the command line.
 option(BUILD_SHARED_LIBS "Build shared libraries" ON)
 option(build_cord "Build cord library" ON)
@@ -80,7 +87,7 @@ option(enable_disclaim "Support alternative finalization interface" ON)
 option(enable_large_config "Optimize for large heap or root set" OFF)
 option(enable_gc_assertions "Enable collector-internal assertion checking" OFF)
 option(enable_mmap "Use mmap instead of sbrk to expand the heap" OFF)
-option(enable_munmap "Return page to the OS if empty for N collections" ON)
+option(enable_munmap "Return page to the OS if empty for N collections" ${default_enable_munmap})
 option(enable_dynamic_loading "Enable tracing of dynamic library data roots" ON)
 option(enable_register_main_static_data "Perform the initial guess of data root sets" ON)
 option(enable_checksums "Report erroneously cleared dirty bits" OFF)

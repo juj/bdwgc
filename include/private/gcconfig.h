@@ -1290,6 +1290,12 @@ EXTERN_C_BEGIN
 #     define OS_TYPE "EMSCRIPTEN"
 #     define DATASTART (ptr_t)ALIGNMENT
 #     define DATAEND (ptr_t)ALIGNMENT
+#     if defined(USE_MMAP) || defined(USE_MUNMAP) || defined(USE_MMAP_ANON)
+          /* Emscripten does emulate mmap() and munmap(), but those     */
+          /* should never be used in bdwgc. Please reconfigure to build */
+          /* without mmap/munmap enabled.                               */
+#         error WebAssembly memory model does not support mmap()/munmap()!
+#     endif
       /* The real page size in WebAssembly is 64KB. However bdwgc does  */
       /* not support a page size that high, the largest supported page  */
       /* size is equal to HBLKSIZE (max <= 16KB). Since there is        */
@@ -1298,7 +1304,7 @@ EXTERN_C_BEGIN
       /* actual page size does not matter much, so override a fake 4KB  */
       /* page size for Wasm.                                            */
 #     define GETPAGESIZE() 4096
-#     undef USE_MUNMAP /* mmap(PROT_NONE) is unsupported, mprotect is no-op */
+
 #     if defined(GC_THREADS) && !defined(CPPCHECK)
 #       error No threads support yet
 #     endif
