@@ -1290,6 +1290,14 @@ EXTERN_C_BEGIN
 #     define OS_TYPE "EMSCRIPTEN"
 #     define DATASTART (ptr_t)ALIGNMENT
 #     define DATAEND (ptr_t)ALIGNMENT
+      /* The real page size in WebAssembly is 64KB. However bdwgc does  */
+      /* not support a page size that high, the largest supported page  */
+      /* size is equal to HBLKSIZE (max <= 16KB). Since there is        */
+      /* currently no real virtual memory/page support in Wasm          */
+      /* (see https://github.com/WebAssembly/design/issues/1397 ), the  */
+      /* actual page size does not matter much, so override a fake 4KB  */
+      /* page size for Wasm.                                            */
+#     define GETPAGESIZE() 4096
 #     undef USE_MUNMAP /* mmap(PROT_NONE) is unsupported, mprotect is no-op */
 #     if defined(GC_THREADS) && !defined(CPPCHECK)
 #       error No threads support yet

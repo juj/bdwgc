@@ -765,6 +765,10 @@ if (build_tests)
   target_link_libraries(middletest PRIVATE gc)
   add_test(NAME middletest COMMAND middletest)
 
+  add_executable(GC_valloctest tests/GC_valloc.c ${NODIST_SRC})
+  target_link_libraries(GC_valloctest PRIVATE gc)
+  add_test(NAME GC_valloctest COMMAND GC_valloctest)
+
   add_executable(realloctest tests/realloc.c ${NODIST_SRC})
   target_link_libraries(realloctest PRIVATE gc)
   add_test(NAME realloctest COMMAND realloctest)
