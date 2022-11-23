@@ -769,7 +769,7 @@ if (build_tests)
     add_test(NAME ${name}test COMMAND ${name}test)
   endmacro()
 
-  foreach(test huge;leak;middle;simple1;GC_valloc;realloc;smash)
+  foreach(test huge;leak;middle;simple1;simple2;GC_valloc;realloc;smash)
     add_gc_test(${test})
   endforeach()
 
@@ -787,41 +787,24 @@ if (build_tests)
   endif()
 
   if (enable_gc_debug)
-    add_executable(tracetest tests/trace.c ${NODIST_SRC})
-    target_link_libraries(tracetest PRIVATE gc)
-    add_test(NAME tracetest COMMAND tracetest)
+    add_gc_test("trace")
   endif()
 
   if (enable_threads)
-    add_executable(atomicopstest tests/atomicops.c ${NODIST_SRC})
-    target_link_libraries(atomicopstest
-                PRIVATE ${ATOMIC_OPS_LIBS_CMAKE} ${THREADDLLIBS_LIST})
-    add_test(NAME atomicopstest COMMAND atomicopstest)
-
-    add_executable(initfromthreadtest tests/initfromthread.c ${NODIST_SRC})
-    target_link_libraries(initfromthreadtest PRIVATE gc ${THREADDLLIBS_LIST})
-    add_test(NAME initfromthreadtest COMMAND initfromthreadtest)
-
-    add_executable(subthreadcreatetest tests/subthreadcreate.c ${NODIST_SRC})
-    target_link_libraries(subthreadcreatetest
-                PRIVATE gc ${ATOMIC_OPS_LIBS_CMAKE} ${THREADDLLIBS_LIST})
-    add_test(NAME subthreadcreatetest COMMAND subthreadcreatetest)
-
-    add_executable(threadleaktest tests/threadleak.c ${NODIST_SRC})
-    target_link_libraries(threadleaktest PRIVATE gc ${THREADDLLIBS_LIST})
-    add_test(NAME threadleaktest COMMAND threadleaktest)
+    foreach(test atomicops;initfromthread;subthreadcreate;threadleak)
+      add_gc_test(${test})
+      target_link_libraries(${test}test PRIVATE ${ATOMIC_OPS_LIBS_CMAKE} ${THREADDLLIBS_LIST})
+    endforeach()
 
     if (NOT WIN32)
-      add_executable(threadkeytest tests/threadkey.c ${NODIST_SRC})
+      add_gc_test("threadkey")
       target_link_libraries(threadkeytest PRIVATE gc ${THREADDLLIBS_LIST})
-      add_test(NAME threadkeytest COMMAND threadkeytest)
     endif()
   endif(enable_threads)
 
   if (enable_cplusplus)
-    add_executable(cpptest WIN32 tests/cpp.cc ${NODIST_SRC})
-    target_link_libraries(cpptest PRIVATE gc gccpp)
-    add_test(NAME cpptest COMMAND cpptest)
+    add_gc_test("cpp")
+    target_link_libraries(cpptest PRIVATE gccpp)
   endif()
 
   if (enable_disclaim)
