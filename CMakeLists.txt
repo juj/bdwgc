@@ -763,29 +763,15 @@ if (build_tests)
                            /wcd=13 /wcd=201 /wcd=367 /wcd=368 /wcd=726)
   endif()
 
-  add_executable(hugetest tests/huge.c ${NODIST_SRC})
-  target_link_libraries(hugetest PRIVATE gc)
-  add_test(NAME hugetest COMMAND hugetest)
+  macro(add_gc_test name)
+    add_executable(${name}test tests/${name}.c ${NODIST_SRC})
+    target_link_libraries(${name}test PRIVATE gc)
+    add_test(NAME ${name}test COMMAND ${name}test)
+  endmacro()
 
-  add_executable(leaktest tests/leak.c ${NODIST_SRC})
-  target_link_libraries(leaktest PRIVATE gc)
-  add_test(NAME leaktest COMMAND leaktest)
-
-  add_executable(middletest tests/middle.c ${NODIST_SRC})
-  target_link_libraries(middletest PRIVATE gc)
-  add_test(NAME middletest COMMAND middletest)
-
-  add_executable(GC_valloctest tests/GC_valloc.c ${NODIST_SRC})
-  target_link_libraries(GC_valloctest PRIVATE gc)
-  add_test(NAME GC_valloctest COMMAND GC_valloctest)
-
-  add_executable(realloctest tests/realloc.c ${NODIST_SRC})
-  target_link_libraries(realloctest PRIVATE gc)
-  add_test(NAME realloctest COMMAND realloctest)
-
-  add_executable(smashtest tests/smash.c ${NODIST_SRC})
-  target_link_libraries(smashtest PRIVATE gc)
-  add_test(NAME smashtest COMMAND smashtest)
+  foreach(test huge;leak;middle;simple1;GC_valloc;realloc;smash)
+    add_gc_test(${test})
+  endforeach()
 
   if (NOT (BUILD_SHARED_LIBS AND WIN32))
     add_library(staticroots_lib_test tests/staticroots_lib.c)
