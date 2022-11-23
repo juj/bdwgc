@@ -766,10 +766,11 @@ if (build_tests)
   macro(add_gc_test name)
     add_executable(${name}test tests/${name}.c ${NODIST_SRC})
     target_link_libraries(${name}test PRIVATE gc)
+    target_compile_definitions(${name}test PUBLIC "-D_DEBUG")
     add_test(NAME ${name}test COMMAND ${name}test)
   endmacro()
 
-  foreach(test huge;leak;middle;simple1;simple2;GC_valloc;realloc;smash)
+  foreach(test huge;leak;middle;simple1;simple2;bss_ptr;global_ptr;global_ptr_freed;GC_valloc;realloc;smash)
     add_gc_test(${test})
   endforeach()
 

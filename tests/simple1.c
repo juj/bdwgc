@@ -1,8 +1,9 @@
 /*
  * Test that releasing an allocated pointer will cause it to be garbage collected.
  */
-#include "gc.h"
+#include "testutil.h"
 #include <stdio.h>
+#include "gc.h"
 
 int main (void)
 {
@@ -10,9 +11,13 @@ int main (void)
 
   (void)GC_malloc(123);
 
-  printf("GC heap free before collect: %zu\n", GC_get_free_bytes());
+  size_t heapBefore = GC_get_free_bytes();
+  printf("GC heap free before collect: %zu\n", heapBefore);
   GC_gcollect();
-  printf("GC heap free before collect: %zu\n", GC_get_free_bytes());
+  size_t heapAfter = GC_get_free_bytes();
+  printf("GC heap free after  collect: %zu (should be more than before)\n", heapAfter);
+
+  assert(heapAfter > heapBefore);
 
   return 0;
 }

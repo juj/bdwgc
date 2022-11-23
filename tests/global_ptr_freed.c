@@ -1,6 +1,6 @@
 /*
- * Test that a global pointer variable in the global data section (not in BSS section)
- * can retain a GC pointer without getting it freed.
+ * Test that a global pointer variable in the global data section
+ * will be freed if the global value is cleared.
  */
 #include "testutil.h"
 #include <stdio.h>
@@ -21,6 +21,8 @@ int main (void)
   GC_INIT();
 
   alloc();
+  printf("%s\n", gc_pointer);
+  gc_pointer = 0; // Clear the just allocated pointer, so it should be freed.
 
   size_t heapBefore = GC_get_free_bytes();
   printf("GC heap free before collect: %zu\n", heapBefore);
@@ -28,9 +30,9 @@ int main (void)
   GC_gcollect();
 
   size_t heapAfter = GC_get_free_bytes();
-  printf("GC heap free after  collect: %zu (should be same as before)\n", heapAfter);
+  printf("GC heap free after  collect: %zu (should be more than before)\n", heapAfter);
 
-  assert(heapBefore == heapAfter);
+  assert(heapAfter > heapBefore);
 
   return 0;
 }

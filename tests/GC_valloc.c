@@ -1,9 +1,9 @@
 /*
  * Test that GC_valloc() function works.
  */
+#include "testutil.h"
 #include "gc.h"
 #include <stdio.h>
-#include <assert.h>
 
 int main (void)
 {

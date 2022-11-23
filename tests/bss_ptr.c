@@ -1,15 +1,15 @@
 /*
- * Test that a global pointer variable in the global data section (not in BSS section)
- * can retain a GC pointer without getting it freed.
+ * Test that a global pointer variable in the BSS segment can retain a GC pointer without
+ * getting it freed.
  */
 #include "testutil.h"
 #include <stdio.h>
 #include <string.h>
 #include "gc.h"
 
-char *gc_pointer = (char*)5; // Does not reside in BSS section, since non-zero initialized (to arbitrary data).
+char *gc_pointer; // Resides in BSS section, since zero-initialized at startup.
 
-void NOINLINE alloc()
+void alloc()
 {
   gc_pointer = GC_malloc(16);
   printf("%p\n", gc_pointer);
