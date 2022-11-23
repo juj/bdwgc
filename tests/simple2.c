@@ -5,10 +5,8 @@
 #include <stdio.h>
 #include "gc.h"
 
-int main (void)
+size_t NOINLINE test_alloc()
 {
-  GC_INIT();
-
   void *ptr = GC_malloc(123);
 
   size_t heapBefore = GC_get_free_bytes();
@@ -20,10 +18,16 @@ int main (void)
 
   assert(heapAfter == heapBefore);
 
-  ptr = 0; // let the ptr be reclaimed
+  return heapBefore;
+}
 
+int main (void)
+{
+  GC_INIT();
+
+  size_t heapBefore = test_alloc();
   GC_gcollect();
-  heapAfter = GC_get_free_bytes();
+  size_t heapAfter = GC_get_free_bytes();
   printf("GC heap free after 2nd collect: %zu (should be more than before)\n", heapAfter);
 
   assert(heapAfter > heapBefore);
